@@ -469,19 +469,35 @@ canvas.addEventListener('touchend', (e) => {
     desenhando = false;
     ctx.beginPath();
 }, { passive: false });
+// Suporte universal para arrastar roteadores no celular e PC (Pointer Events)
+    document.querySelectorAll('.ap-node, .router, #canvas-container > div').forEach(router => {
+        let arrastando = false;
+        let offsetX, offsetY;
 
-// Permite arrastar os roteadores com o dedo no celular
-document.querySelectorAll('.ap-node, .router, #canvas-container > div').forEach(ap => {
-    ap.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const touch = e.touches[0];
-        const container = ap.offsetParent || document.body;
-        const rect = container.getBoundingClientRect();
-        ap.style.left = (touch.clientX - rect.left - 20) + 'px';
-        ap.style.top = (touch.clientY - rect.top - 20) + 'px';
-    }, { passive: false });
-});
+        router.style.touchAction = 'none';
+
+        router.addEventListener('pointerdown', (e) => {
+            arrastando = true;
+            offsetX = e.clientX - router.offsetLeft;
+            offsetY = e.clientY - router.offsetTop;
+            router.setPointerCapture(e.pointerId);
+            e.stopPropagation(); // Impede que o canvas desenhe ao tocar no roteador
+        });
+
+        router.addEventListener('pointermove', (e) => {
+            if (!arrastando) return;
+            e.preventDefault();
+            router.style.position = 'absolute';
+            router.style.left = (e.clientX - offsetX) + 'px';
+            router.style.top = (e.clientY - offsetY) + 'px';
+        });
+
+        router.addEventListener('pointerup', (e) => {
+            if (!arrastando) return;
+            arrastando = false;
+            try { router.releasePointerCapture(e.pointerId); } catch(err) {}
+        });
+    });
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
         desenhando = true;
