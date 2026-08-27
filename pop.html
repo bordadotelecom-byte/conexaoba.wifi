@@ -25,14 +25,14 @@
         tr:nth-child(even) { background: #111827; }
         .badge { background: #10b981; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
         .img-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 15px; }
-        .img-box { background: #0b1220; border: 1px solid #1e293b; border-radius: 8px; padding: 10px; width: 100%; max-width: 400px; text-align: center; }
-        .img-box img { max-width: 100%; height: auto; border-radius: 6px; }
+        .img-box { background: #0b1220; border: 1px solid #1e293b; border-radius: 8px; padding: 15px; width: 100%; max-width: 400px; text-align: center; }
         .img-caption { color: #94a3b8; font-size: 0.8rem; margin-top: 8px; font-weight: 500; }
+        svg { width: 100%; height: auto; }
     </style>
 </head>
 <body>
 
-    <h1>POP Wi-Fi Conexaoba <span class="badge">v1.1</span></h1>
+    <h1>POP Wi-Fi Conexaoba <span class="badge">v1.2</span></h1>
     <p>Procedimento Operacional Padrão para Configuração, Canalização e Troubleshooting de Redes Sem Fio em Campo.</p>
 
     <div class="card">
@@ -50,12 +50,41 @@
         
         <div class="img-grid">
             <div class="img-box">
-                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBfcJC0nICIsIxfeEzAoMzA0NTU1HE5DPTgyNy4eNTL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLR ChYkNOEl8RcYGRolJicoKSo0NTY3ODk60RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oADAMBAAIRD8A39k/95f++T/8VRsn/vL/AN8n/wCKq1s9qNntQA3ZP/eX/vk//FUbJ/7y/wDfJ/8AiqtbPa jZ7UAN2T/wB5f++T/wDFUbJ/7y/98n/xVWtntRs9qAG7J/7y/wDfJ/8AiqNk/95f++T/APFVa2e1Gz2oAbsn/vL/AN8n/wCKo2T/AN5f++T/APFVa2e1Gz2oAbsn/vL/AN8n/wCKo2T/AN5f++T/APFVa2e1Gz2oAbsn/vL/AN8n/wCKo2T/AN5f++T/APFVa2e1Gz2oA82ooorUkKKKKACiiigAoo ooAKKKKACiiigAooooAKKKKAPNqKKK1JCiiigAooooAKKKKACiiigAooo oAKKKKACiiigDzaooorUkKKKKACiiigAooo oAKKKKACiiigAooooAKKKKAPNqKKK1JCiiigAooooAKKKKACiiigAooo oAKKKKACiiigDzaooorUkKKKKACiiigAooo oAKKKKACiiigAooooAKKKKAPNqKKK1JCiiigAooooAKKKKACiiigAooo oAKKKKACiiigDzaooorUkKKKKACiiigAooo oAKKKKACiiigAooooAKKKKAP/Z" alt="Analisador de Espectro 2.4 GHz">
-                <p class="img-caption">Espectro 2.4 GHz (Canais 1 a 13 / 20 MHz)</p>
+                <!-- Espectro 2.4 GHz SVG -->
+                <svg viewBox="0 0 350 160" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="350" height="160" fill="#090d16" rx="6"/>
+                    <line x1="20" y1="130" x2="330" y2="130" stroke="#334155" stroke-width="2"/>
+                    <!-- Canais limpos: 1, 6, 11 -->
+                    <path d="M 20,130 Q 55,20 90,130" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="2"/>
+                    <path d="M 120,130 Q 155,20 190,130" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="2"/>
+                    <path d="M 220,130 Q 255,20 290,130" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="2"/>
+                    <!-- Ruído/Sobreposição -->
+                    <path d="M 60,130 Q 80,70 100,130" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" stroke-dasharray="3,3"/>
+                    <text x="55" y="145" fill="#38bdf8" font-size="11" font-weight="bold">CH 1</text>
+                    <text x="155" y="145" fill="#38bdf8" font-size="11" font-weight="bold">CH 6</text>
+                    <text x="255" y="145" fill="#38bdf8" font-size="11" font-weight="bold">CH 11</text>
+                    <text x="175" y="15" fill="#94a3b8" font-size="10" text-anchor="middle">Espectro 2.4 GHz (Canais Não Sobrepostos)</text>
+                </svg>
+                <p class="img-caption">2.4 GHz: Apenas canais 1, 6 e 11 evitam interferência mútua.</p>
             </div>
+
             <div class="img-box">
-                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBfcJC0nICIsIxfeEzAoMzA0NTU1HE5DPTgyNy4eNTL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLR ChYkNOEl8RcYGRolJicoKSo0NTY3ODk60RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oADAMBAAIRD8A39k/95f++T/8VRsn/vL/AN8n/wCKq1s9qNntQA3ZP/eX/vk//FUbJ/7y/98n/xVWtntRs9qAG7J/7y/98n/xVWtntRs9qAG7J/7y/98n/wCKo2T/AN5f++T/APFVa2e1Gz2oAbsn/vL/AN8n/wCKo2T/AN5f++T/APFVa2e1Gz2oAbsn/vL/AN8n/xVWtntRs9qAG7J/7y/98n/xVWtntRs9qAE/x/maKdt+tFAHmdFFFakBRRRQAUUUUAFFFFABRRRQAUUUUAFFF FAEg/x/maKdt+tFAH//2Q==" alt="Analisador de Espectro 5 GHz">
-                <p class="img-caption">Espectro 5 GHz (Canais 36-169 / 40-80 MHz)</p>
+                <!-- Espectro 5 GHz SVG -->
+                <svg viewBox="0 0 350 160" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="350" height="160" fill="#090d16" rx="6"/>
+                    <line x1="20" y1="130" x2="330" y2="130" stroke="#334155" stroke-width="2"/>
+                    <!-- Blocos de 80MHz/40MHz em 5GHz -->
+                    <rect x="30" y="40" width="60" height="90" fill="rgba(168, 85, 247, 0.2)" stroke="#a855f7" stroke-width="2" rx="4"/>
+                    <rect x="100" y="40" width="60" height="90" fill="rgba(168, 85, 247, 0.2)" stroke="#a855f7" stroke-width="2" rx="4"/>
+                    <rect x="180" y="40" width="60" height="90" fill="rgba(168, 85, 247, 0.2)" stroke="#a855f7" stroke-width="2" rx="4"/>
+                    <rect x="250" y="40" width="60" height="90" fill="rgba(168, 85, 247, 0.2)" stroke="#a855f7" stroke-width="2" rx="4"/>
+                    <text x="60" y="145" fill="#a855f7" font-size="10" text-anchor="middle" font-weight="bold">CH 36-48</text>
+                    <text x="130" y="145" fill="#a855f7" font-size="10" text-anchor="middle" font-weight="bold">CH 52-64</text>
+                    <text x="210" y="145" fill="#a855f7" font-size="10" text-anchor="middle" font-weight="bold">CH 100-112</text>
+                    <text x="280" y="145" fill="#a855f7" font-size="10" text-anchor="middle" font-weight="bold">CH 149-161</text>
+                    <text x="175" y="15" fill="#94a3b8" font-size="10" text-anchor="middle">Espectro 5 GHz (Larguras de 40 / 80 MHz)</text>
+                </svg>
+                <p class="img-caption">5 GHz: Blocos mais largos sem sobreposição direta.</p>
             </div>
         </div>
     </div>
