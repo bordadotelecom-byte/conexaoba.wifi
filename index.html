@@ -421,41 +421,37 @@
     }
 
     updateRouterUI();
-    // Eventos para desenho via Touch/Pointer (Celular e PC)
-const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext('2d');
-let desenhando = false;
+// Suporte a Desenho no Celular (Touch Events)
+    function getTouchPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0] || e.changedTouches[0];
+        return {
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top
+        };
+    }
 
-function getPosicao(e) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-    };
-}
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        desenhando = true;
+        const pos = getTouchPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }, { passive: false });
 
-canvas.addEventListener('pointerdown', (e) => {
-    desenhando = true;
-    const pos = getPosicao(e);
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-    canvas.setPointerCapture(e.pointerId);
-});
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (!desenhando) return;
+        const pos = getTouchPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }, { passive: false });
 
-canvas.addEventListener('pointermove', (e) => {
-    if (!desenhando) return;
-    const pos = getPosicao(e);
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-});
-
-const pararDesenho = (e) => {
-    desenhando = false;
-    ctx.beginPath();
-};
-
-canvas.addEventListener('pointerup', pararDesenho);
-canvas.addEventListener('pointercancel', pararDesenho);
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        desenhando = false;
+        ctx.beginPath();
+    }, { passive: false });
 </script>
 </body>
 </html>
