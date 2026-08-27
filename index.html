@@ -5,17 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Wi-Fi de Campo - FTTx & Wi-Fi 7</title>
     <style>
-       canvas {
-    touch-action: none;
-    position: relative;
-    z-index: 1;
-}
-
-.ap-node, .router, #canvas-container > div {
-    touch-action: none;
-    z-index: 10;
-    cursor: move;
-}
         :root {
             --bg: #090d16;
             --panel: #131b2e;
@@ -131,6 +120,7 @@
             border: 1px solid #1f2937;
             width: 100%;
             display: block;
+            touch-action: none;
         }
 
         table {
@@ -149,7 +139,6 @@
         tr { background: #111827; }
         tr:nth-child(even) { background: #162447; }
 
-        /* Estilo para gerar PDF via Impressão */
         @media print {
             body { background: #ffffff; color: #000000; padding: 0; }
             .toolbar-group, .btn-remove-ap, button { display: none !important; }
@@ -167,7 +156,6 @@
 <div class="container">
     <h2>Simulador de Cobertura Wi-Fi (Técnico de Campo)</h2>
 
-    <!-- Gestão de Cômodos -->
     <div class="toolbar-group">
         <div class="toolbar-title">Adicionar Cômodos Rapidamente</div>
         <div class="buttons">
@@ -184,7 +172,6 @@
         </div>
     </div>
 
-    <!-- Gestão de Roteadores -->
     <div class="toolbar-group">
         <div class="toolbar-title">Pontos de Acesso / Roteadores</div>
         <div class="buttons" style="margin-bottom:8px;">
@@ -215,8 +202,10 @@
 
     let currentMode = 'pointer';
     let isDrawing = false;
+    let desenhando = false;
     let drawStartX = 0, drawStartY = 0, drawCurrentX = 0, drawCurrentY = 0;
     let draggedRouter = null;
+    let activeTouchRouter = null;
 
     let rooms = [
         { name: 'Sala', x: 20, y: 20, w: 220, h: 180 },
@@ -289,6 +278,7 @@
         draw();
     }
 
+    // Mouse Events (PC)
     canvas.addEventListener('mousedown', (e) => {
         const rect = canvas.getBoundingClientRect();
         const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
@@ -300,7 +290,7 @@
             drawCurrentX = mx; drawCurrentY = my;
         } else {
             routers.forEach(r => {
-                if (Math.hypot(r.x - mx, r.y - my) < 20) draggedRouter = r;
+                if (Math.hypot(r.x - mx, r.y - my) < 25) draggedRouter = r;
             });
         }
     });
@@ -341,6 +331,68 @@
         draw();
     });
 
+    // Touch Events (Celular / Tablet)
+    canvas.addEventListener('touchstart', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const mx = (touch.clientX - rect.left) * (canvas.width / rect.width);
+        const my = (touch.clientY - rect.top) * (canvas.height / rect.height);
+
+        if (currentMode === 'draw') {
+            e.preventDefault();
+            desenhando = true;
+            drawStartX = mx; drawStartY = my;
+            drawCurrentX = mx; drawCurrentY = my;
+        } else {
+            routers.forEach(r => {
+                if (Math.hypot(r.x - mx, r.y - my) < 30) {
+                    activeTouchRouter = r;
+                }
+            });
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const mx = (touch.clientX - rect.left) * (canvas.width / rect.width);
+        const my = (touch.clientY - rect.top) * (canvas.height / rect.height);
+
+        if (currentMode === 'draw' && desenhando) {
+            e.preventDefault();
+            drawCurrentX = mx; drawCurrentY = my;
+            draw();
+        } else if (activeTouchRouter && currentMode === 'pointer') {
+            e.preventDefault();
+            activeTouchRouter.x = mx;
+            activeTouchRouter.y = my;
+            draw();
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', (e) => {
+        if (currentMode === 'draw' && desenhando) {
+            e.preventDefault();
+            desenhando = false;
+            const w = drawCurrentX - drawStartX;
+            const h = drawCurrentY - drawStartY;
+            if (Math.abs(w) > 30 && Math.abs(h) > 30) {
+                const name = prompt('Nome do Cômodo:', 'Novo Cômodo');
+                if (name) {
+                    rooms.push({
+                        name: name,
+                        x: w > 0 ? drawStartX : drawCurrentX,
+                        y: h > 0 ? drawStartY : drawCurrentY,
+                        w: Math.abs(w),
+                        h: Math.abs(h)
+                    });
+                }
+            }
+            draw();
+        }
+        activeTouchRouter = null;
+    }, { passive: false });
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -351,15 +403,12 @@
 
         // Cobertura RF (Ondas)
         routers.forEach(r => {
-            // 2.4 GHz
             ctx.beginPath(); ctx.arc(r.x, r.y, 190, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(56, 189, 248, 0.1)'; ctx.fill();
 
-            // 5 GHz
             ctx.beginPath(); ctx.arc(r.x, r.y, 110, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(74, 222, 128, 0.15)'; ctx.fill();
 
-            // 6 GHz (Wi-Fi 6 e 7)
             if (r.tech === 'wifi6' || r.tech === 'wifi7') {
                 ctx.beginPath(); ctx.arc(r.x, r.y, 65, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(168, 85, 247, 0.25)'; ctx.fill();
@@ -375,7 +424,7 @@
         });
 
         // Retângulo de Desenho Temporário
-        if (isDrawing) {
+        if ((isDrawing || desenhando) && currentMode === 'draw') {
             ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
             ctx.strokeRect(drawStartX, drawStartY, drawCurrentX - drawStartX, drawCurrentY - drawStartY);
             ctx.setLineDash([]);
@@ -429,118 +478,6 @@
     }
 
     updateRouterUI();
-// Suporte a Desenho no Celular (Touch Events)
-    function getTouchPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0] || e.changedTouches[0];
-        return {
-            x: touch.clientX - rect.left,
-            y: touch.clientY - rect.top
-        };
-    }
-// Suporte a Desenho e Arraste no Celular (Touch Events)
-function getTouchPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches[0] || e.changedTouches[0];
-    return {
-        x: touch.clientX - rect.left,
-        y: touch.clientY - rect.top
-    };
-}
-
-canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    desenhando = true;
-    const pos = getTouchPos(e);
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-}, { passive: false });
-
-canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    if (!desenhando) return;
-    const pos = getTouchPos(e);
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-}, { passive: false });
-
-canvas.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    desenhando = false;
-    ctx.beginPath();
-}, { passive: false });
-// Suporte universal e dinâmico para arrastar roteadores (Event Delegation)
-let routerArrastando = null;
-let startX, startY, initialLeft, initialTop;
-
-document.addEventListener('pointerdown', (e) => {
-    const target = e.target.closest('.ap-node, .router, #canvas-container > div');
-    if (!target) return;
-    
-    routerArrastando = target;
-    routerArrastando.style.touchAction = 'none';
-    try { routerArrastando.setPointerCapture(e.pointerId); } catch(err) {}
-    
-    startX = e.clientX;
-    startY = e.clientY;
-    initialLeft = routerArrastando.offsetLeft;
-    initialTop = routerArrastando.offsetTop;
-    
-    e.stopPropagation(); // Impede que o canvas desenhe ao tocar no roteador
-});
-
-document.addEventListener('pointermove', (e) => {
-    if (!routerArrastando) return;
-    e.preventDefault();
-    
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    
-    routerArrastando.style.position = 'absolute';
-    routerArrastando.style.left = (initialLeft + dx) + 'px';
-    routerArrastando.style.top = (initialTop + dy) + 'px';
-});
-
-document.addEventListener('pointerup', (e) => {
-    if (!routerArrastando) return;
-    try { routerArrastando.releasePointerCapture(e.pointerId); } catch(err) {}
-    routerArrastando = null;
-});
-        router.addEventListener('pointermove', (e) => {
-            if (!arrastando) return;
-            e.preventDefault();
-            router.style.position = 'absolute';
-            router.style.left = (e.clientX - offsetX) + 'px';
-            router.style.top = (e.clientY - offsetY) + 'px';
-        });
-
-        router.addEventListener('pointerup', (e) => {
-            if (!arrastando) return;
-            arrastando = false;
-            try { router.releasePointerCapture(e.pointerId); } catch(err) {}
-        });
-    });
-    canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        desenhando = true;
-        const pos = getTouchPos(e);
-        ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-    }, { passive: false });
-
-    canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (!desenhando) return;
-        const pos = getTouchPos(e);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    }, { passive: false });
-
-    canvas.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        desenhando = false;
-        ctx.beginPath();
-    }, { passive: false });
 </script>
 </body>
 </html>
