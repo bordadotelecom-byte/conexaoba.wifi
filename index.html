@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Wi-Fi de Campo - FTTx & Wi-Fi 7</title>
+    <style>
+        :root {
+            --bg: #090d16;
+            --panel: #131b2e;
+            --accent-blue: #38bdf8;
+            --accent-purple: #a855f7;
+            --grid-green: #06180e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+        }
+
+        h2 {
+            margin: 0 0 15px 0;
+            font-size: 1.4rem;
+            color: #fff;
+        }
+
+        .toolbar-group {
+            background: var(--panel);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #1e293b;
+            margin-bottom: 12px;
+        }
+
+        .toolbar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        button:hover { background: #334155; }
+        .btn-ap { background: var(--accent-blue); color: #000; border: none; }
+        .btn-draw { background: #f59e0b; color: #000; border: none; }
+        .btn-pdf { background: #10b981; color: #000; border: none; margin-left: auto; }
+        .btn-clear { background: #ef4444; border: none; }
+
+        .router-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .router-card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-remove-ap {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        select, input {
+            background: #1f2937;
+            color: #fff;
+            border: 1px solid #374151;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        canvas {
+            background: var(--grid-green);
+            border-radius: 8px;
+            border: 1px solid #1f2937;
+            width: 100%;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        tr { background: #111827; }
+        tr:nth-child(even) { background: #162447; }
+
+        /* Estilo para gerar PDF via Impressão */
+        @media print {
+            body { background: #ffffff; color: #000000; padding: 0; }
+            .toolbar-group, .btn-remove-ap, button { display: none !important; }
+            .container { max-width: 100%; }
+            canvas { border: 1px solid #000000; }
+            table { width: 100%; margin-top: 20px; }
+            tr { background: #ffffff !important; color: #000000 !important; border-bottom: 1px solid #ccc; }
+            th, td { color: #000000 !important; }
+            h2 { color: #000000 !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Simulador de Cobertura Wi-Fi (Técnico de Campo)</h2>
+
+    <!-- Gestão de Cômodos -->
+    <div class="toolbar-group">
+        <div class="toolbar-title">Adicionar Cômodos Rapidamente</div>
+        <div class="buttons">
+            <button onclick="addPresetRoom('Sala')">+ Sala</button>
+            <button onclick="addPresetRoom('Cozinha')">+ Cozinha</button>
+            <button onclick="addPresetRoom('Quarto Frente')">+ Quarto Frente</button>
+            <button onclick="addPresetRoom('Quarto Fundo')">+ Quarto Fundo</button>
+            <button onclick="addPresetRoom('Corredor')">+ Corredor</button>
+            <button onclick="addPresetRoom('Banheiro')">+ Banheiro</button>
+            <button class="btn-draw" onclick="toggleDrawMode()" id="btnDraw">✏️ Desenhar Sob Medida</button>
+            <button class="btn-clear" onclick="clearRooms()">Limpar Planta</button>
+            <button class="btn-pdf" onclick="exportPDF()">📄 Gerar PDF / Relatório</button>
+        </div>
+    </div>
+
+    <!-- Gestão de Roteadores -->
+    <div class="toolbar-group">
+        <div class="toolbar-title">Pontos de Acesso / Roteadores</div>
+        <div class="buttons" style="margin-bottom:8px;">
+            <button class="btn-ap" onclick="addRouter()">+ Adicionar Roteador (AP)</button>
+        </div>
+        <div class="router-bar" id="routerBar"></div>
+    </div>
+
+    <canvas id="simCanvas" width="800" height="420"></canvas>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cômodo</th>
+                <th>Melhor AP (IP)</th>
+                <th>Sinal Estimado</th>
+                <th>Padrão Ativo</th>
+                <th>Uso Recomendado</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+
+<script>
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let currentMode = 'pointer';
+    let isDrawing = false;
+    let drawStartX = 0, drawStartY = 0, drawCurrentX = 0, drawCurrentY = 0;
+    let draggedRouter = null;
+
+    let rooms = [
+        { name: 'Sala', x: 20, y: 20, w: 220, h: 180 },
+        { name: 'Cozinha', x: 20, y: 210, w: 220, h: 190 },
+        { name: 'Corredor', x: 250, y: 20, w: 60, h: 380 },
+        { name: 'Quarto Frente', x: 320, y: 20, w: 230, h: 180 },
+        { name: 'Quarto Fundo', x: 320, y: 210, w: 230, h: 190 }
+    ];
+
+    let routers = [
+        { id: 1, ip: '192.168.1.1', x: 130, y: 110, tech: 'wifi6', power: 20 }
+    ];
+
+    function addPresetRoom(name) {
+        const offsetX = 50 + (rooms.length % 3) * 180;
+        const offsetY = 50 + Math.floor(rooms.length / 3) * 120;
+        const width = name === 'Corredor' ? 60 : 180;
+        const height = name === 'Corredor' ? 300 : 140;
+
+        rooms.push({ name: name, x: offsetX, y: offsetY, w: width, h: height });
+        draw();
+    }
+
+    function toggleDrawMode() {
+        currentMode = currentMode === 'pointer' ? 'draw' : 'pointer';
+        const btn = document.getElementById('btnDraw');
+        btn.style.background = currentMode === 'draw' ? '#4ade80' : '#f59e0b';
+        btn.innerText = currentMode === 'draw' ? 'Pronto (Modo Mover)' : '✏️ Desenhar Sob Medida';
+        canvas.style.cursor = currentMode === 'draw' ? 'crosshair' : 'default';
+    }
+
+    function addRouter() {
+        const id = routers.length + 1;
+        routers.push({ id: id, ip: `192.168.1.${id}`, x: 430, y: 110, tech: 'wifi7', power: 20 });
+        updateRouterUI();
+    }
+
+    function removeRouter(index) {
+        if (routers.length > 1) {
+            routers.splice(index, 1);
+            updateRouterUI();
+        } else {
+            alert('É necessário manter ao menos um roteador na simulação.');
+        }
+    }
+
+    function clearRooms() {
+        rooms = [];
+        draw();
+    }
+
+    function exportPDF() {
+        window.print();
+    }
+
+    function updateRouterUI() {
+        const container = document.getElementById('routerBar');
+        container.innerHTML = routers.map((r, i) => `
+            <div class="router-card">
+                <strong>AP ${r.id}:</strong>
+                <input type="text" style="width:85px;" value="${r.ip}" onchange="routers[${i}].ip = this.value; draw();">
+                <select onchange="routers[${i}].tech = this.value; draw();">
+                    <option value="wifi5" ${r.tech==='wifi5'?'selected':''}>Wi-Fi 5 (AC)</option>
+                    <option value="wifi6" ${r.tech==='wifi6'?'selected':''}>Wi-Fi 6 (AX)</option>
+                    <option value="wifi7" ${r.tech==='wifi7'?'selected':''}>Wi-Fi 7 (BE)</option>
+                </select>
+                <button class="btn-remove-ap" onclick="removeRouter(${i})" title="Remover Roteador">✕</button>
+            </div>
+        `).join('');
+        draw();
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        if (currentMode === 'draw') {
+            isDrawing = true;
+            drawStartX = mx; drawStartY = my;
+            drawCurrentX = mx; drawCurrentY = my;
+        } else {
+            routers.forEach(r => {
+                if (Math.hypot(r.x - mx, r.y - my) < 20) draggedRouter = r;
+            });
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        if (isDrawing) {
+            drawCurrentX = mx; drawCurrentY = my;
+            draw();
+        } else if (draggedRouter) {
+            draggedRouter.x = mx; draggedRouter.y = my;
+            draw();
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        if (isDrawing) {
+            isDrawing = false;
+            const w = drawCurrentX - drawStartX;
+            const h = drawCurrentY - drawStartY;
+            if (Math.abs(w) > 30 && Math.abs(h) > 30) {
+                const name = prompt('Nome do Cômodo:', 'Novo Cômodo');
+                if (name) {
+                    rooms.push({
+                        name: name,
+                        x: w > 0 ? drawStartX : drawCurrentX,
+                        y: h > 0 ? drawStartY : drawCurrentY,
+                        w: Math.abs(w),
+                        h: Math.abs(h)
+                    });
+                }
+            }
+        }
+        draggedRouter = null;
+        draw();
+    });
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Grade de Fundo
+        ctx.strokeStyle = '#114227'; ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+        for (let y = 0; y < canvas.height; y += 20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+
+        // Cobertura RF (Ondas)
+        routers.forEach(r => {
+            // 2.4 GHz
+            ctx.beginPath(); ctx.arc(r.x, r.y, 190, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.1)'; ctx.fill();
+
+            // 5 GHz
+            ctx.beginPath(); ctx.arc(r.x, r.y, 110, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(74, 222, 128, 0.15)'; ctx.fill();
+
+            // 6 GHz (Wi-Fi 6 e 7)
+            if (r.tech === 'wifi6' || r.tech === 'wifi7') {
+                ctx.beginPath(); ctx.arc(r.x, r.y, 65, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.25)'; ctx.fill();
+            }
+        });
+
+        // Desenhar Cômodos
+        rooms.forEach(room => {
+            ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 4;
+            ctx.strokeRect(room.x, room.y, room.w, room.h);
+            ctx.fillStyle = '#ffffff'; ctx.font = '13px sans-serif';
+            ctx.fillText(room.name, room.x + 10, room.y + 22);
+        });
+
+        // Retângulo de Desenho Temporário
+        if (isDrawing) {
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+            ctx.strokeRect(drawStartX, drawStartY, drawCurrentX - drawStartX, drawCurrentY - drawStartY);
+            ctx.setLineDash([]);
+        }
+
+        // Ícone do Roteador / AP
+        routers.forEach(r => {
+            ctx.beginPath(); ctx.arc(r.x, r.y, 9, 0, Math.PI * 2);
+            ctx.fillStyle = r.tech === 'wifi7' ? '#a855f7' : (r.tech === 'wifi6' ? '#4ade80' : '#38bdf8');
+            ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+        });
+
+        updateTable();
+    }
+
+    function updateTable() {
+        const tbody = document.getElementById('tableBody');
+        if (!rooms.length || !routers.length) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Monte a planta e adicione roteadores.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = rooms.map(room => {
+            const rx = room.x + room.w / 2;
+            const ry = room.y + room.h / 2;
+            let maxRssi = -100;
+            let bestAp = routers[0];
+
+            routers.forEach(r => {
+                const dist = Math.hypot(rx - r.x, ry - r.y);
+                const rssi = Math.round(r.power - (20 * Math.log10(Math.max(dist, 10))) - 3);
+                if (rssi > maxRssi) { maxRssi = rssi; bestAp = r; }
+            });
+
+            let usage = '4K/8K Gaming Multi-Dispositivo';
+            if (maxRssi < -62) usage = 'Streaming Full HD / Home Office';
+            if (maxRssi < -75) usage = 'Navegação Básica / WhatsApp';
+
+            let techLabel = bestAp.tech === 'wifi7' ? 'Wi-Fi 7 (BE)' : (bestAp.tech === 'wifi6' ? 'Wi-Fi 6 (AX)' : 'Wi-Fi 5 (AC)');
+
+            return `
+                <tr>
+                    <td><strong>${room.name}</strong></td>
+                    <td>${bestAp.ip}</td>
+                    <td style="color:${maxRssi > -65 ? '#4ade80' : (maxRssi > -75 ? '#f59e0b' : '#ef4444')}">${maxRssi} dBm</td>
+                    <td>${techLabel}</td>
+                    <td>${usage}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    updateRouterUI();
+</script>
+</body>
+</html>
