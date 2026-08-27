@@ -469,21 +469,43 @@ canvas.addEventListener('touchend', (e) => {
     desenhando = false;
     ctx.beginPath();
 }, { passive: false });
-// Suporte universal para arrastar roteadores no celular e PC (Pointer Events)
-    document.querySelectorAll('.ap-node, .router, #canvas-container > div').forEach(router => {
-        let arrastando = false;
-        let offsetX, offsetY;
+// Suporte universal e dinâmico para arrastar roteadores (Event Delegation)
+let routerArrastando = null;
+let startX, startY, initialLeft, initialTop;
 
-        router.style.touchAction = 'none';
+document.addEventListener('pointerdown', (e) => {
+    const target = e.target.closest('.ap-node, .router, #canvas-container > div');
+    if (!target) return;
+    
+    routerArrastando = target;
+    routerArrastando.style.touchAction = 'none';
+    try { routerArrastando.setPointerCapture(e.pointerId); } catch(err) {}
+    
+    startX = e.clientX;
+    startY = e.clientY;
+    initialLeft = routerArrastando.offsetLeft;
+    initialTop = routerArrastando.offsetTop;
+    
+    e.stopPropagation(); // Impede que o canvas desenhe ao tocar no roteador
+});
 
-        router.addEventListener('pointerdown', (e) => {
-            arrastando = true;
-            offsetX = e.clientX - router.offsetLeft;
-            offsetY = e.clientY - router.offsetTop;
-            router.setPointerCapture(e.pointerId);
-            e.stopPropagation(); // Impede que o canvas desenhe ao tocar no roteador
-        });
+document.addEventListener('pointermove', (e) => {
+    if (!routerArrastando) return;
+    e.preventDefault();
+    
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    
+    routerArrastando.style.position = 'absolute';
+    routerArrastando.style.left = (initialLeft + dx) + 'px';
+    routerArrastando.style.top = (initialTop + dy) + 'px';
+});
 
+document.addEventListener('pointerup', (e) => {
+    if (!routerArrastando) return;
+    try { routerArrastando.releasePointerCapture(e.pointerId); } catch(err) {}
+    routerArrastando = null;
+});
         router.addEventListener('pointermove', (e) => {
             if (!arrastando) return;
             e.preventDefault();
