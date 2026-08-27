@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Wi-Fi de Campo - FTTx & Wi-Fi 7</title>
     <style>
+        canvas {
+    touch-action: none;
+}
         :root {
             --bg: #090d16;
             --panel: #131b2e;
@@ -418,6 +421,41 @@
     }
 
     updateRouterUI();
+    // Eventos para desenho via Touch/Pointer (Celular e PC)
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
+let desenhando = false;
+
+function getPosicao(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    };
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+    desenhando = true;
+    const pos = getPosicao(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener('pointermove', (e) => {
+    if (!desenhando) return;
+    const pos = getPosicao(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+});
+
+const pararDesenho = (e) => {
+    desenhando = false;
+    ctx.beginPath();
+};
+
+canvas.addEventListener('pointerup', pararDesenho);
+canvas.addEventListener('pointercancel', pararDesenho);
 </script>
 </body>
 </html>
