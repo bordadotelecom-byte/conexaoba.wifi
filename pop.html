@@ -24,24 +24,44 @@
         th { background: #1e293b; color: #38bdf8; }
         tr:nth-child(even) { background: #111827; }
         .badge { background: #10b981; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
+        .img-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 15px; }
+        .img-box { background: #0b1220; border: 1px solid #1e293b; border-radius: 8px; padding: 10px; width: 100%; max-width: 400px; text-align: center; }
+        .img-box img { max-width: 100%; height: auto; border-radius: 6px; }
+        .img-caption { color: #94a3b8; font-size: 0.8rem; margin-top: 8px; font-weight: 500; }
     </style>
 </head>
 <body>
 
-    <h1>POP Wi-Fi Conexaoba <span class="badge">v1.0</span></h1>
+    <h1>POP Wi-Fi Conexaoba <span class="badge">v1.1</span></h1>
     <p>Procedimento Operacional Padrão para Configuração, Canalização e Troubleshooting de Redes Sem Fio em Campo.</p>
 
     <div class="card">
         <h2>1. Padrão de Canalização e Parâmetros de RF</h2>
         <ul>
-            <li><strong>2.4 GHz (Alcance/IoT):** Fixar canais <strong>1, 6 ou 11</strong>. Largura de banda em <strong>20 MHz</strong>. Segurança WPA2-PSK.</li>
-            <li><strong>5 GHz (Alta Velocidade):** Fixar canais <strong>36, 44, 149 ou 157</strong> (Evita DFS). Largura de <strong>40 MHz</strong> (denso) ou <strong>80 MHz</strong> (limpo).</li>
-            <li><strong>6 GHz (Wi-Fi 6E / Wi-Fi 7):** Canais PSC <strong>37, 69, 101, 133</strong>. Largura de <strong>80 MHz ou 160 MHz</strong>. Segurança WPA3-SAE.</li>
+            <li><strong>2.4 GHz (Alcance/IoT):</strong> Fixar canais <strong>1, 6 ou 11</strong>. Largura de banda em <strong>20 MHz</strong>. Segurança WPA2-PSK.</li>
+            <li><strong>5 GHz (Alta Velocidade):</strong> Fixar canais <strong>36, 44, 149 ou 157</strong> (Evita DFS). Largura de <strong>40 MHz</strong> (denso) ou <strong>80 MHz</strong> (limpo).</li>
+            <li><strong>6 GHz (Wi-Fi 6E / Wi-Fi 7):</strong> Canais PSC <strong>37, 69, 101, 133</strong>. Largura de <strong>80 MHz ou 160 MHz</strong>. Segurança WPA3-SAE.</li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>2. Matriz de Resolução de Problemas em Campo</h2>
+        <h2>2. Referências do Analisador de Frequência</h2>
+        <p>Verifique a poluição e distribuição de canais em campo comparando com os espectros de referência abaixo:</p>
+        
+        <div class="img-grid">
+            <div class="img-box">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBfcJC0nICIsIxfeEzAoMzA0NTU1HE5DPTgyNy4eNTL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLR ChYkNOEl8RcYGRolJicoKSo0NTY3ODk60RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oADAMBAAIRD8A39k/95f++T/8VRsn/vL/AN8n/wCKq1s9qNntQA3ZP/eX/vk//FUbJ/7y/wDfJ/8AiqtbPa jZ7UAN2T/wB5f++T/wDFUbJ/7y/98n/xVWtntRs9qAG7J/7y/wDfJ/8AiqNk/95f++T/APFVa2e1Gz2oAbsn/vL/AN8n/wCKo2T/AN5f++T/APFVa2e1Gz2oAbsn/vL/AN8n/wCKo2T/AN5f++T/APFVa2e1Gz2oAbsn/vL/AN8n/wCKo2T/AN5f++T/APFVa2e1Gz2oA82ooorUkKKKKACiiigAoo ooAKKKKACiiigAooooAKKKKAPNqKKK1JCiiigAooooAKKKKACiiigAooo oAKKKKACiiigDzaooorUkKKKKACiiigAooo oAKKKKACiiigAooooAKKKKAPNqKKK1JCiiigAooooAKKKKACiiigAooo oAKKKKACiiigDzaooorUkKKKKACiiigAooo oAKKKKACiiigAooooAKKKKAPNqKKK1JCiiigAooooAKKKKACiiigAooo oAKKKKACiiigDzaooorUkKKKKACiiigAooo oAKKKKACiiigAooooAKKKKAP/Z" alt="Analisador de Espectro 2.4 GHz">
+                <p class="img-caption">Espectro 2.4 GHz (Canais 1 a 13 / 20 MHz)</p>
+            </div>
+            <div class="img-box">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBfcJC0nICIsIxfeEzAoMzA0NTU1HE5DPTgyNy4eNTL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLR ChYkNOEl8RcYGRolJicoKSo0NTY3ODk60RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oADAMBAAIRD8A39k/95f++T/8VRsn/vL/AN8n/wCKq1s9qNntQA3ZP/eX/vk//FUbJ/7y/98n/xVWtntRs9qAG7J/7y/98n/xVWtntRs9qAG7J/7y/98n/wCKo2T/AN5f++T/APFVa2e1Gz2oAbsn/vL/AN8n/wCKo2T/AN5f++T/APFVa2e1Gz2oAbsn/vL/AN8n/xVWtntRs9qAG7J/7y/98n/xVWtntRs9qAE/x/maKdt+tFAHmdFFFakBRRRQAUUUUAFFFFABRRRQAUUUUAFFF FAEg/x/maKdt+tFAH//2Q==" alt="Analisador de Espectro 5 GHz">
+                <p class="img-caption">Espectro 5 GHz (Canais 36-169 / 40-80 MHz)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>3. Matriz de Resolução de Problemas em Campo</h2>
         <table>
             <thead>
                 <tr>
@@ -62,9 +82,9 @@
                     <td>Separar SSIDs (ex: Conexaoba_2G e Conexaoba_5G) e usar WPA2.</td>
                 </tr>
                 <tr>
-                    <td>Sinal fraco em cômodos distantes (< -75 dBm)</td>
+                    <td>Sinal fraco em cômodos distantes (&lt; -75 dBm)</td>
                     <td>Atenuação física de paredes/lajes</td>
-                    <td>Instalar AP Mesh adicional com backhaul via **Cabo Cat6**.</td>
+                    <td>Instalar AP Mesh adicional com backhaul via <strong>Cabo Cat6</strong>.</td>
                 </tr>
                 <tr>
                     <td>Queda de conexão ao caminhar pela casa</td>
@@ -76,7 +96,7 @@
     </div>
 
     <div class="card">
-        <h2>3. Checklist de Liberação da Ordem de Serviço (OS)</h2>
+        <h2>4. Checklist de Liberação da Ordem de Serviço (OS)</h2>
         <ul>
             <li><strong>Sinal Mínimo:</strong> Atingir no mínimo <strong>-65 dBm</strong> nos pontos principais.</li>
             <li><strong>Velocidade:</strong> Entregar ao menos <strong>80% da banda contratada</strong> a 3 metros do AP.</li>
