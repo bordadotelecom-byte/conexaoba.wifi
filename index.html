@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Wi-Fi de Campo - FTTx & Wi-Fi 7</title>
     <style>
-        canvas {
+       canvas {
     touch-action: none;
+    position: relative;
+    z-index: 1;
+}
+
+.ap-node, .router, #canvas-container > div {
+    touch-action: none;
+    z-index: 10;
+    cursor: move;
 }
         :root {
             --bg: #090d16;
@@ -430,7 +438,50 @@
             y: touch.clientY - rect.top
         };
     }
+// Suporte a Desenho e Arraste no Celular (Touch Events)
+function getTouchPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0] || e.changedTouches[0];
+    return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+    };
+}
 
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    desenhando = true;
+    const pos = getTouchPos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (!desenhando) return;
+    const pos = getTouchPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+}, { passive: false });
+
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    desenhando = false;
+    ctx.beginPath();
+}, { passive: false });
+
+// Permite arrastar os roteadores com o dedo no celular
+document.querySelectorAll('.ap-node, .router, #canvas-container > div').forEach(ap => {
+    ap.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const touch = e.touches[0];
+        const container = ap.offsetParent || document.body;
+        const rect = container.getBoundingClientRect();
+        ap.style.left = (touch.clientX - rect.left - 20) + 'px';
+        ap.style.top = (touch.clientY - rect.top - 20) + 'px';
+    }, { passive: false });
+});
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
         desenhando = true;
